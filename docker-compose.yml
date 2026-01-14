@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Serviço 1: Banco de Dados
+  postgres: 
+    image: postgres:14
+    container_name: driva_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: driva_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # executa init.sql ao iniciar
+  
+  # Serviço 2: Automatização
+  n8n:
+    image: n8nio/n8n
+    container_name: driva_n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin
+    depends_on:
+      - postgres
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+
+  # Serviço 3: API
+  api:
+    build: ./api
+    container_name: driva_api
+    command: uvicorn main:app --host 0.0.0.0 --port 3000 --reload
+    volumes:
+      - ./api:/app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/driva_db
+    depends_on:
+      - postgres
