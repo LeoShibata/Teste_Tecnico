@@ -3,3 +3,4 @@ uvicorn
 sqlalchemy
 psycopg2-binary
 pydantic
+faker # para gerar dados de testes
