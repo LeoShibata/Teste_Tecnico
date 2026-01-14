@@ -43,17 +43,17 @@ def get_enrichments(page: int = 1, limit: int = 50):
         created = fake.date_time_between(start_date = '-30d', end_date = 'now')
         updated = created + timedelta(minutes = random.randint(1, 120))
 
-    item = {
-        "id": str(uuid.uuid4()),
-        "id_workspace": str(uuid.uuid4()),
-        "workspace_name": fake.company(),
-        "total_contacts": random.randint(5, 2000),
-        "contact_type": random.choice(["COMPANY", "PERSON"]),
-        "status": random.choice(["COMPLETED", "COMPLETED", "COMPLETED", "FAILED", "PROCESSING"]),
-        "created_at": created.isoformat(),
-        "updated_at": updated.isoformat()
-    }
-    data.append(item)
+        item = {
+            "id": str(uuid.uuid4()),
+            "id_workspace": str(uuid.uuid4()),
+            "workspace_name": fake.company(),
+            "total_contacts": random.randint(5, 2000),
+            "contact_type": random.choice(["COMPANY", "PERSON"]),
+            "status": random.choice(["COMPLETED", "COMPLETED", "COMPLETED", "FAILED", "PROCESSING"]),
+            "created_at": created.isoformat(),
+            "updated_at": updated.isoformat()
+        }
+        data.append(item)
 
     return {
         "meta": {
