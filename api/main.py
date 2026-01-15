@@ -77,10 +77,17 @@ def get_analytics():
     """)
 
     with engine.connect() as conn:
-        result = conn.execute(query).mapping().first()
+        result = conn.execute(query).first()
 
+    if not result:
+        return {
+            "total_jobs": 0,
+            "sucessos": 0,
+            "tempo_medio_minutos": 0
+        }
+    
     return {
-        "total_jobs": result['total_jobs'] or 0,
-        "sucessos": result['sucessos'] or 0,
-        "tempo_medio_minutos": round(result['tempo_medio'] or 0, 2)
+        "total_jobs": result[0] or 0,
+        "sucessos": result[1] or 0,
+        "tempo_medio_minutos": round(result[2] or 0, 2)
     }
