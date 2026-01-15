@@ -53,7 +53,7 @@ st.subheader("📋 Últimos Enriquecimentos (Detalhes)")
 
 def get_enrichments_table():
     try:
-        response = requests.get("http://driva_api:3000/analytics/enrichments?limit=20")
+        response = requests.get("http://driva_api:3000/analytics/enrichments?limit=500")
         if response.status_code == 200:
             return response.json()
         return []
