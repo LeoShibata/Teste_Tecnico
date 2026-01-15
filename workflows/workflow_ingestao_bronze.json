@@ -1,0 +1,186 @@
+{
+  "name": "Ingestão - Bronze",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://api:3000/v1/enrichments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e05ac565-f58d-4d76-9618-82134b91f202",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "v1eiD1GcYEpvwQk5",
+          "name": "API Driva"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ad235e3e-dfb3-494c-a9a4-f6fc38c21252",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "bronze_enrichments",
+          "mode": "list",
+          "cachedResultName": "bronze_enrichments"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "raw_data": "={{ $json }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "raw_data",
+              "displayName": "raw_data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dw_ingested_at",
+              "displayName": "dw_ingested_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dw_updated_at",
+              "displayName": "dw_updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c30c1819-7ca7-4913-aee1-09829bc4af64",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "LIK2l2Kt3l2FRQCy",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "ce16cbf6-a262-4061-9da3-2f10f319fcf0",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7c255a84-2a2c-459f-aee9-87f2737b119c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2e7acdf635fbf04d338901d7968a68094f26239b67a2b6a57e7c894de2f22233"
+  },
+  "id": "Lh-9tfuB22mj03L5FD-2k",
+  "tags": []
+}
