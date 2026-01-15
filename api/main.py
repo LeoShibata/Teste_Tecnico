@@ -91,3 +91,35 @@ def get_analytics():
         "sucessos": result[1] or 0,
         "tempo_medio_minutos": round(result[2] or 0, 2)
     }
+
+# EndPoint para tabela do dashboard
+@app.get("/analytics/enrichments")
+def get_enrichments_list(limit: int = 10):
+    query = text(f""" 
+        SELECT
+            id_enriquecimento,
+            nome_workspace,
+            status_processamento,
+            tipo_contato,
+            duracao_processamento_minutos
+        FROM gold_enrichments
+        ORDER BY data_criacao DESC
+        LIMIT :limit
+    """)
+
+    with engine.connect() as conn:
+        try:
+            result = conn.execute(query, {"limit": limit}).mapping().all()
+        except:
+            result = conn.execute(query, {"limit": limit}).all()
+            result = [
+                {
+                    "id_enriquecimento": row[0],
+                    "nome_workspace": row[1],
+                    "status_processamento": row[2],
+                    "tipo_contato": row[3],
+                    "duracao_processamento_minutos": row[4]
+                } for row in result
+            ]
+
+    return result

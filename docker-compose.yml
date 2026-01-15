@@ -45,3 +45,14 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/driva_db
     depends_on:
       - postgres
+
+    # Serviço 4: FrontEnd
+  dashboard:
+    build: ./dashboard
+    container_name: driva_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./dashboard:/app
+    depends_on:
+      - api
