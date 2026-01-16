@@ -112,9 +112,7 @@ A API serve tanto como fonte de dados quanto como backend para o dashboard:
 O dashboard permite monitorar os KPIs de ingestão e analisar os dados detalhados.
 
 ### Visão Geral (KPIs e Gráficos)
-Aqui temos a visão consolidada com distribuição por status e tipo de contato:
 ![Visão Geral do Dashboard](assets/dashboard2.jpg)
 
 ### Detalhes dos Dados (Tabela)
-Visualização tabular para auditoria dos enriquecimentos processados:
 ![Tabela de Detalhes](assets/dashboard1.jpg)
