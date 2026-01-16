@@ -52,7 +52,7 @@ def get_enrichments(page: int = 1, limit: int = 50):
             "workspace_name": fake.company(),
             "total_contacts": random.randint(5, 2000),
             "contact_type": random.choice(["COMPANY", "PERSON"]),
-            "status": random.choice(["COMPLETED", "COMPLETED", "COMPLETED", "FAILED", "PROCESSING"]),
+            "status": random.choice(["COMPLETED", "COMPLETED", "COMPLETED", "FAILED", "PROCESSING", "CANCELED"]),
             "created_at": created.isoformat(),
             "updated_at": updated.isoformat()
         }

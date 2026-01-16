@@ -3,6 +3,18 @@ import pandas as pd
 import requests
 import altair as alt
 
+CORES_STATUS = {
+    "CONCLUIDO": "#2ecc71",
+    "EM_PROCESSAMENTO": "#f1c40f",
+    "FALHOU": "#e74c3c",   
+    "CANCELADO": "#95a5a6"
+}
+
+CORES_TIPO = {
+    "EMPRESA": "#9b59b6",
+    "PESSOA": "#3498db"
+}
+
 # Configuração da Página
 st.set_page_config(page_title = "Monitoramento Driva", page_icon = "📊", layout = "wide")
 
@@ -70,13 +82,32 @@ if not df_filtered.empty:
 
     with col_graf1:
         st.altair_chart(alt.Chart(df_filtered).mark_bar().encode(
-            x = 'status_processamento', y = 'count()', color = 'status_processamento', tooltip = ['count()']
-        ).interactive(), use_container_width = True)
+            x=alt.X('status_processamento', axis=None), 
+            y=alt.Y('count()', title='Quantidade'),
+            color=alt.Color(
+                'status_processamento',
+                scale=alt.Scale(
+                    domain=list(CORES_STATUS.keys()), 
+                    range=list(CORES_STATUS.values())
+                ),
+                legend=alt.Legend(title="Status")
+            ),
+            tooltip=['status_processamento', 'count()']
+        ).interactive().properties(title="Jobs por Status"), use_container_width=True)
 
     with col_graf2:
-        st.altair_chart(alt.Chart(df_filtered).mark_arc(innerRadius = 50).encode(
-            theta = alt.Theta("count()", stack = True), color = "tipo_contato", tooltip = ['tipo_contato', 'count()']
-        ), use_container_width = True)
+        st.altair_chart(alt.Chart(df_filtered).mark_arc(innerRadius=50).encode(
+            theta=alt.Theta("count()", stack=True),
+            color=alt.Color(
+                "tipo_contato",
+                scale=alt.Scale(
+                    domain=list(CORES_TIPO.keys()), 
+                    range=list(CORES_TIPO.values())
+                ),
+                legend=alt.Legend(title="Tipo")
+            ),
+            tooltip=['tipo_contato', 'count()']
+        ).properties(title="Empresas vs Pessoas"), use_container_width=True)
 
     st.markdown("---")
     st.subheader("Detalhes")
