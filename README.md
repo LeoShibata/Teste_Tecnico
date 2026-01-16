@@ -24,6 +24,18 @@ A solução foi orquestrada utilizando **Docker Compose** e integra os seguintes
 
 ---
 
+## Visualização do Dashboard
+
+O dashboard permite monitorar os KPIs de ingestão e analisar os dados detalhados.
+
+### Visão Geral (KPIs e Gráficos)
+![Visão Geral do Dashboard](assets/dashboard2.jpg)
+
+### Detalhes dos Dados (Tabela)
+![Tabela de Detalhes](assets/dashboard1.jpg)
+
+---
+
 ## Como Executar o Projeto
 
 ### Pré-requisitos
@@ -106,13 +118,3 @@ A API serve tanto como fonte de dados quanto como backend para o dashboard:
 ├── init.sql            # Script de inicialização do Banco de Dados
 └── README.md           # Documentação do projeto
 ```
-
-## Visualização do Dashboard
-
-O dashboard permite monitorar os KPIs de ingestão e analisar os dados detalhados.
-
-### Visão Geral (KPIs e Gráficos)
-![Visão Geral do Dashboard](assets/dashboard2.jpg)
-
-### Detalhes dos Dados (Tabela)
-![Tabela de Detalhes](assets/dashboard1.jpg)
