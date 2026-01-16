@@ -4,7 +4,7 @@ import requests
 import altair as alt
 
 # Configuração da Página
-st.set_page_config(page_title = "Monitoramento Driva", page_icon = "🚀", layout = "wide")
+st.set_page_config(page_title = "Monitoramento Driva", page_icon = "📊", layout = "wide")
 
 # CSS para ajustar tamanho da fonte dos números (Métricas)
 st.markdown("<style>[data-testid='stMetricValue'] { font-size: 24px; }</style>", unsafe_allow_html=True)
@@ -47,7 +47,7 @@ with st.sidebar:
         df_filtered = pd.DataFrame()
 
 # Layout Principal
-st.title("🚀 HubDriva | Monitoramento")
+st.title("📊 Monitoramento de Enriquecimento")
 st.markdown("---")
 
 # KPIs
@@ -65,21 +65,21 @@ if kpis:
 
 # Gráficos e Tabelas
 if not df_filtered.empty:
-    st.subheader("📊 Análise Visual")
+    st.subheader("Análise Visual")
     col_graf1, col_graf2 = st.columns(2)
 
     with col_graf1:
         st.altair_chart(alt.Chart(df_filtered).mark_bar().encode(
-            x = 'status_processamento', y = 'count()', color='status_processamento', tooltip = ['count()']
-        ).interactive(), use_container_width=True)
+            x = 'status_processamento', y = 'count()', color = 'status_processamento', tooltip = ['count()']
+        ).interactive(), use_container_width = True)
 
     with col_graf2:
         st.altair_chart(alt.Chart(df_filtered).mark_arc(innerRadius = 50).encode(
-            theta=alt.Theta("count()", stack = True), color="tipo_contato", tooltip = ['tipo_contato', 'count()']
+            theta = alt.Theta("count()", stack = True), color = "tipo_contato", tooltip = ['tipo_contato', 'count()']
         ), use_container_width = True)
 
     st.markdown("---")
-    st.subheader("📋 Detalhes")
+    st.subheader("Detalhes")
     
     # Tabela Simples
     st.dataframe(
