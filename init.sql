@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS bronze_enrichments (
     id SERIAL PRIMARY KEY,
     raw_data JSONB NOT NULL,
     dw_ingested_at TIMESTAMP DEFAULT NOW(), -- data/hora em que registro foi ingerido pela primeira vez na Bronze
-    dw_updated_at TIMESTAMP DEFAULT NOW()    -- data/hora da última atualização do registro na Bronze
+    dw_updated_at TIMESTAMP DEFAULT NOW()   -- data/hora da última atualização do registro na Bronze
 );
 
 -- Tabela Gold (Dados Refinados)

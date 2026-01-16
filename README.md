@@ -6,10 +6,16 @@ Este repositório contém a solução para o teste técnico. O projeto consiste 
 
 A solução foi orquestrada utilizando **Docker Compose** e integra os seguintes serviços:
 
-* **API (Python/FastAPI):** Simula a fonte de dados (com paginação e erros aleatórios) e fornece endpoints de analytics.
-* **PostgreSQL:** Data Warehouse armazenando as camadas **Bronze** (dados brutos) e **Gold** (dados refinados).
-* **n8n:** Orquestrador de workflows responsável pela ingestão (ETL) e transformação dos dados.
-* **Dashboard (Streamlit):** Interface frontend para visualização de KPIs e monitoramento dos jobs.
+* **PostgreSQL (Data Warehouse):**
+    * **Camada Bronze:** Armazena o JSON bruto (`raw_data`).
+    * **Camada Gold:** Dados limpos, traduzidos, desduplicados e com métricas calculadas (ex: duração do processamento).
+* **n8n (Workflow Engine):**
+    * Responsável pela ingestão periódica (5 min), tratamento de erros (Retry com Backoff) e transformação de dados (Bronze → Gold).
+* **API (Python/FastAPI):**
+    * *Fonte:* Simula uma API externa com paginação, geração de dados aleatórios e erros esporádicos (Rate Limit/429).
+    * *Analytics:* Expõe endpoints de leitura otimizados consumindo a camada Gold.
+* **Dashboard (Streamlit):**
+    * Interface interativa para monitoramento de KPIs e visualização dos dados em tempo real.
 
 ### Fluxo de Dados
 1.  **Ingestão:** O n8n consulta a API a cada 5 minutos, trata erros (429/Retry) e salva os dados brutos na tabela `bronze_enrichments`.
@@ -34,7 +40,7 @@ A solução foi orquestrada utilizando **Docker Compose** e integra os seguintes
 
 2.  **Suba o ambiente:**
     ```bash
-    docker-compose up --build
+    docker-compose up --build -d
     ```
     *Aguardar alguns instantes para que todos os containers (Postgres, n8n, API, Dashboard) iniciem.*
 
@@ -45,17 +51,22 @@ A solução foi orquestrada utilizando **Docker Compose** e integra os seguintes
 
 ---
 
-## Configuração do n8n (Importante)
+## Configuração dos Workflows (n8n)
 
 Para que a automação funcione, é necessário importar os workflows criados:
 
 1.  Acesse o n8n em [http://localhost:5678](http://localhost:5678).
-2.  Utilize as credenciais padrão:
     * **Usuário:** `admin`
-    * **Senha:** `admin`
-3.  Vá em **Workflows** > **Add Workflow** > **Import from File**.
-4.  Selecione os arquivos `.json` localizados na pasta `/workflows` deste projeto.
-5.  **Ative** o workflow "Orquestrador" (botão **Activate** no canto superior direito) para iniciar o agendamento automático.
+    * **Senha:** `admin` (ou conforme configurado no seu ambiente).
+2.  Vá em **Workflows** > **Add Workflow** > **Import from File**.
+3.  Selecione os arquivos `.json` localizados na pasta `/workflows` deste repositório.
+4.  * **Configuração de Credenciais:**
+    * Ao importar, verifique os nós de **Postgres**. Se a credencial não vier configurada, crie uma nova credencial "Postgres" com os seguintes dados (baseados no `docker-compose.yml`):
+        * **Host:** `postgres`
+        * **User:** `user`
+        * **Password:** `password`
+        * **Database:** `driva_db`
+5.  **Ative** o workflow "Orquestrador" (botão **Activate** no canto superior direito) para iniciar o agendamento automático a cada 5 minutos.
 
 ---
 
@@ -68,7 +79,7 @@ Para que a automação funcione, é necessário importar os workflows criados:
 ## Uso de IA
 
 Conforme sugerido nas instruções do teste, ferramentas de IA foram utilizadas para:
-1.  **Infraestrutura:** Auxílio na configuração inicial do `docker-compose.yml` e rede entre containers.
+1.  **Infraestrutura:** Auxílio na configuração inicial do `docker-compose.yml`, volumes e rede interna entre containers.
 2.  **Debugging:** Identificação do problema de limite de leitura no nó do Postgres (n8n), que travava o dashboard em 50 registros.
 3.  **SQL:** Geração do script `init.sql` para criação das tabelas Bronze e Gold.
 
@@ -76,8 +87,22 @@ Conforme sugerido nas instruções do teste, ferramentas de IA foram utilizadas 
 
 ## Endpoints da API
 
-* `GET /v1/enrichments`: Retorna dados simulados (requer token).
-* `GET /analytics/overview`: Retorna KPIs gerais (Total, Sucesso, Tempo Médio).
-* `GET /analytics/enrichments`: Lista detalhada dos jobs processados.
+A API serve tanto como fonte de dados quanto como backend para o dashboard:
 
-**Token de Teste:** `driva_test_key_abc123xyz789`
+* `GET /v1/enrichments`: Retorna dados simulados para o n8n (Requer header `Authorization: Bearer driva_test_key_abc123xyz789`).
+* `GET /analytics/overview`: Retorna KPIs agregados (Total, Sucesso, Tempo Médio).
+* `GET /analytics/enrichments`: Lista detalhada e paginada dos jobs processados na camada Gold.
+
+---
+
+## Estrutura do Repositório
+
+```text
+.
+├── api/                # Código da API (Python/FastAPI) e Dockerfile
+├── dashboard/          # Código do Dashboard (Streamlit) e Dockerfile
+├── workflows/          # JSONs dos fluxos do n8n (Ingestão, Processamento, Orquestrador)
+├── docker-compose.yml  # Orquestração dos containers
+├── init.sql            # Script de inicialização do Banco de Dados
+└── README.md           # Documentação do projeto
+```

@@ -11,25 +11,28 @@ from typing import Optional
 
 # Configuração de Banco de Dados
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@postgres:5432/driva_db")
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit = False, autoflush = False, bind = engine)
-fake = Faker('pt_BR')
 
+fake = Faker('pt_BR')
 app = FastAPI()
 security = HTTPBearer()
 
 API_KEY_EXPECTED = "driva_test_key_abc123xyz789"
 
+# Sistema de Autentificação
 def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
     if credentials.credentials != API_KEY_EXPECTED:
         raise HTTPException(status_code = 403, detail = "Credenciais inválidas")
     return credentials.credentials
 
+
 @app.get("/")
 def read_root(): 
-    return {"message": "API Driva rodando com sucesso!"}
+    return {"message": "API rodando com sucesso!"}
 
-# EndPoint de Fonte
+# Endpoint de Fonte (Simulação para o n8n)
 @app.get("/v1/enrichments", dependencies = [Depends(verify_api_key)])
 def get_enrichments(page: int = 1, limit: int = 50):
     if random.random() < 0.05: # 5% de chance de erro 429
@@ -65,7 +68,7 @@ def get_enrichments(page: int = 1, limit: int = 50):
         "data": data
     }
 
-# EndPoint de Analytics
+# Endpoint de Analytics (KPIs para o Dashboard)
 @app.get("/analytics/overview")
 def get_analytics():
     query = text("""
@@ -92,7 +95,7 @@ def get_analytics():
         "tempo_medio_minutos": round(result[2] or 0, 2)
     }
 
-# EndPoint para tabela do dashboard
+# Endpoint de Lista (Tabela Detalhada para o Dashboard)
 @app.get("/analytics/enrichments")
 def get_enrichments_list(limit: int = 10):
     query = text(f""" 
