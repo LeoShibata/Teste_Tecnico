@@ -78,7 +78,7 @@ Para que a automação funcione, é necessário importar os workflows criados:
         * **User:** `user`
         * **Password:** `password`
         * **Database:** `driva_db`
-5.  **Ative** o workflow "Orquestrador" (botão **Activate** no canto superior direito) para iniciar o agendamento automático a cada 5 minutos.
+5.  **Ative** o workflow "Orquestrador" (botão **Publish** no canto superior direito) para iniciar o agendamento automático a cada 5 minutos.
 
 ---
 

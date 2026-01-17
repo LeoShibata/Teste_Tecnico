@@ -16,7 +16,7 @@ CORES_TIPO = {
 }
 
 # Configuração da Página
-st.set_page_config(page_title = "Monitoramento Driva", page_icon = "📊", layout = "wide")
+st.set_page_config(page_title = "Monitoramento - Driva", page_icon = "📊", layout = "wide")
 
 # CSS para ajustar tamanho da fonte dos números (Métricas)
 st.markdown("<style>[data-testid='stMetricValue'] { font-size: 24px; }</style>", unsafe_allow_html=True)
